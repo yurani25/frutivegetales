@@ -23,24 +23,18 @@
                 <th>Acciones</th>
             </tr>
         </thead>
+        
         <tbody>
-            @foreach ($abastecimientos as $abastecimiento)
+            @foreach ($data as $abastecimiento)
             <tr>
-                <td>{{$abastecimiento->id}}</td>
-                <td>{{$abastecimiento->nombre}}</td>
-                <td>{{$abastecimiento->ubicacion}}</td>
-                <td>{{$abastecimiento->horario_atencion}}</td>
+                <td>{{$abastecimiento['id']}}</td>
+                <td>{{$abastecimiento['nombre']}}</td>
+                <td>{{$abastecimiento['ubicacion']}}</td>
+                <td>{{$abastecimiento['horario_atencion']}}</td>
                 <td>
-                    <form action="{{ route('abastecimientos.destroy', $abastecimiento->id) }}" method="POST">
-                        @csrf
-                        @method('delete')
-                        <button class="delete-button" type="submit">Eliminar</button>
-                    </form>
 
-                    <form action="{{ route('abastecimientos.edit', $abastecimiento->id) }}" method="GET">
-                        @csrf
-                        <button class="edit-button" type="submit">Editar</button>
-                    </form>
+                    <a class="delete-button" href="{{ route('abastecimientos.destroy', $abastecimiento['id']) }}">eliminar </a>
+                    <a href="{{ route('abastecimientos.edit', $abastecimiento['id']) }}" class="edit-button">Editar</a>
                 </td>
             </tr>
             @endforeach

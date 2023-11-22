@@ -52,13 +52,11 @@
         }
     </script>
  <div class="profile-card">
-    <form action="{{ route('users.update', $user->id) }}" method="POST" enctype="multipart/form-data" onsubmit="return validateForm();">
-        @csrf
-        @method('put')
-
+    <form action="{{ route('users.update', ['id' => $data['id']]) }}" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
+        
         <div class="profile-picture-section">
             <div class="profile-picture-container">
-                <img src="{{ asset('storage/' . $user->profile_picture ?: 'img/default_profile_picture.png') }}" alt="Profile Picture" class="profile-picture">
+                <img src="{{ asset('storage/' . $data->profile_picture ?: 'img/default_profile_picture.png') }}" alt="Profile Picture" class="profile-picture">
                 <div class="change-photo-icon">
                     <label for="profile_picture">
                         <i class="fas fa-camera"></i>
@@ -71,32 +69,32 @@
         <div class="form-section">
             <div class="form-group">
                 <label for="nombres">Nombre:</label>
-                <input type="text" name="nombres" id="nombres" value="{{ $user->nombres }}" autofocus>
+                <input type="text" name="nombres" id="nombres" value="{{ $data['nombres'] }}" autofocus>
             </div>
 
             <div class="form-group">
                 <label for="apellidos">Apellidos:</label>
-                <input type="text" name="apellidos" id="apellidos" value="{{ $user->apellidos }}" autofocus>
+                <input type="text" name="apellidos" id="apellidos" value="{{ $data['apellidos'] }}" autofocus>
             </div>
 
             <div class="form-group">
                 <label for="edad">Edad:</label>
-                <input type="text" name="edad" id="edad" value="{{ $user->edad }}" autofocus>
+                <input type="text" name="edad" id="edad" value="{{ $data['edad'] }}" autofocus>
             </div>
 
             <div class="form-group">
                 <label for="telefono">Teléfono:</label>
-                <input type="text" name="telefono" id="telefono" value="{{ $user->telefono }}" autofocus>
+                <input type="text" name="telefono" id="telefono" value="{{ $data['telefono'] }}" autofocus>
             </div>
 
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="text" name="email" id="email" value="{{ $user->email }}" autofocus>
+                <input type="text" name="email" id="email" value="{{ $data['email'] }}" autofocus>
             </div>
 
             <div class="form-group">
                 <label for="password">Contraseña:</label>
-                <input type="password" name="password" id="password" value="{{ $user->password }}" autofocus>
+                <input type="password" name="password" id="password" value="{{ $data['password'] }}" autofocus>
             </div>
 
             <div class="form-group">

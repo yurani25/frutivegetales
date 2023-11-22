@@ -22,41 +22,34 @@
             <th>user_id</th>
             <th>Productos</th>
             <th>Tiempo de Reclamo</th>
-            <th>Imagen</th>
+     {{--        <th>Imagen</th> --}}
             <th>Precio</th>
             <th>descripcion</th>
             <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
-        @foreach ($productos as $producto)
+        @foreach ($data as $producto)
         <tr>
-            <td>{{$producto->id}}</td>
-            <td>{{$producto->user_id}}</td>
-            <td>{{$producto->nombres}}</td>
-            <td>{{$producto->tiempo_reclamo}}</td>
-         
+            <td>{{$producto['id'] }}</td>
+            <td>{{$producto ['user_id']}}</td>
+            <td>{{$producto['nombres']}}</td>
+            <td>{{$producto['tiempo_reclamo']}}</td>
+         {{-- 
             <td>
                 @if ($producto->imagen)
                     <img class="product-image" src="{{ asset('storage/productos/' . $producto->imagen) }}" alt="Imagen del producto">
                 @else
                     No hay imagen
                 @endif
-            </td>
-            <td>{{$producto->precio}}</td>
-            <td>{{$producto->descripcion}}</td>
+            </td> --}}
+            <td>{{$producto['precio']}}</td>
+            <td>{{$producto['descripcion']}}</td>
             <td>
-                <form action="{{ route('productos.destroy', $producto->id) }}" method="POST">
-                    @csrf
-                    @method('delete')
-                    <button class="delete-button" type="submit">Eliminar</button>
-                </form>
-
-                <form action="{{ route('productos.edit', $producto->id) }}" method="GET">
-                    @csrf
-                    <button class="edit-button" type="submit">Editar</button>
-                </form>
-
+       
+                <a class="delete-button" href="{{ route('productos.destroy', $producto['id']) }}">eliminar </a>
+                                  
+              <a href="{{ route('productos.edit', $producto['id']) }}" class="edit-button">Editar</a>
 
             </td>
         </tr>

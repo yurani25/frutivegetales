@@ -30,23 +30,34 @@ Route::get('/', function () {
 
 
 // Rutas de autenticación
-Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
+/* Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('login', 'Auth\LoginController@login');
-Route::post('logout', 'Auth\LoginController@logout')->name('logout');
+Route::post('logout', 'Auth\LoginController@logout')->name('logout'); */
 
 
  //users
  Route::get('users/create', [usersController::class, 'create'])->name('users.create');
- Route::post('users', [usersController::class, 'store'])->name('users.store');
+/*  Route::post('users', [usersController::class, 'store'])->name('users.store'); */
  Route::get('users', [usersController::class, 'index'])->name('users.index');
  
  //editar 
  Route::get('users/{user}/edit', [usersController::class, 'edit'])->name('users.edit');
- Route::put('users/{user}', [usersController::class, 'update'])->name('users.update');
+
+ Route::put('/users/update', [usersController::class, 'update'])->name('users.update');
+
+
 //eliminar
-Route::delete('users/{users}',[usersController::class, 'destroy'])->name('users.destroy');
+Route::get('users/{user}',[usersController::class, 'destroy'])->name('users.destroy');
 
 ///////
+//login y registro
+
+Route::get('/usuario/create',[usersController::class, 'createUser'])->name('user.create');
+route::get('login',[usersController::class,'login'])->name('login');
+route::post('logins',[usersController::class,'logins'])->name('logins');
+route::post('registro',[usersController::class,'registro'])->name('registro');
+/* route::get('logout',[usersController::class,'logout'])->name('logout'); */
+
 
  //productos
 Route::get('productos/create', [productosController::class, 'create'])->name('productos.create');
@@ -59,14 +70,17 @@ Route::get('productos/create', [productosController::class, 'create'])->name('pr
 
 Route::post('productos', [productosController::class, 'store'])->name('productos.store');
 Route::get('productos', [productosController::class, 'index'])->name('productos.index');
-Route::get('productos/{producto}', [productosController::class, 'show'])->name('productos.show');
+
+/* 
+Route::get('productos/{producto}', [productosController::class, 'show'])->name('productos.show'); */
 
 
 //editar
 Route::get('productos/{producto}/edit', [productosController::class, 'edit'])->name('productos.edit');
-Route::put('productos/{producto}', [productosController::class, 'update'])->name('productos.update');
+Route::post('/productos/update', [productosController::class, 'update'])->name('productos');
+
 //eliminar
-Route::delete('productos/{producto}',[productosController::class, 'destroy'])->name('productos.destroy');
+Route::get('productos/{producto}',[productosController::class, 'destroy'])->name('productos.destroy');
 
 ////
 
@@ -83,6 +97,8 @@ Route::delete('mensajes/{mensaje}',[mensajesController::class, 'destroy'])->name
 
 ///////
 
+
+
 //abastecimientos
 Route::get('abastecimientos/create', [AbastecimientosController::class, 'create'])->name('abastecimientos.create');
 Route::post('abastecimientos', [AbastecimientosController::class, 'store'])->name('abastecimientos.store');
@@ -90,7 +106,9 @@ Route::get('abastecimientos', [AbastecimientosController::class, 'index'])->name
 
 //editar
 Route::get('abastecimientos/{abastecimiento}/edit', [AbastecimientosController::class, 'edit'])->name('abastecimientos.edit');
-Route::put('abastecimientos/{abastecimiento}', [AbastecimientosController::class, 'update'])->name('abastecimientos.update');
+// Ruta en el monolito
+Route::put('abastecimientos/{id}', [AbastecimientosController::class, 'update'])->name('abastecimientos.update');
+
 //eliminar
 Route::delete('abastecimientos/{abastecimiento}',[AbastecimientosController::class, 'destroy'])->name('abastecimientos.destroy');
 

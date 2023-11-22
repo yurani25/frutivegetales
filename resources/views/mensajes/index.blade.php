@@ -25,28 +25,22 @@
             <th>  Acciones</th>
         </tr>
     </thead>
-    @foreach ($mensaje as $mensaje)
+    @foreach ($data as $mensaje)
     <tbody>
         <tr>
-            <td>{{$mensaje->id}} </td>
-            <td>{{$mensaje->user_id}}</td>
-            <td>{{$mensaje->nombre_chat}}</td>
+            <td>{{$mensaje['id']}} </td>
+            <td>{{$mensaje['user_id']}}</td>
+            <td>{{$mensaje['nombre_chat']}}</td>
             <td>
-                <form action="{{ route('mensajes.destroy', $mensaje->id) }}" method="POST">
-                    @csrf
-                    @method('delete')
-                    <button type="submit" class="delete-button">Eliminar</button>
-                </form>
-
-                <form action="{{route('mensajes.edit', $mensaje->id)}}" method="GET">
-                    @csrf
-                    <button class="edit-button" type="submit">Editar</button>
-                </form>
-
+             
+                <a class="delete-button" href="{{ route('mensajes.destroy', $mensaje['id']) }}">eliminar </a>
+                                  
+              <a href="{{ route('mensajes.edit', $mensaje['id']) }}" class="edit-button">Editar</a>
             </td>
         </tr>
+        @endforeach
     </tbody>
-    @endforeach
+
 </table>
 
 <a class="add-button" href="{{route('mensajes.create')}}">Agregar</a>

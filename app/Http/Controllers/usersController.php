@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\abastecimiento;
+use Illuminate\Support\Facades\Http;
 use App\Models\rol;
 use App\Models\user;
 use Illuminate\Http\Request;
@@ -20,8 +21,15 @@ class usersController extends Controller
      */
     public function index()
     {
-        $user=user::all();
-        return view('users.index' , compact('user'));
+
+        $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
+
+        $response =  Http::get($url.'users');
+
+        $data = $response->json();
+
+        return view('users.index', compact('data'));
+
     }
 
     /**
@@ -29,51 +37,128 @@ class usersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-   public function create()
+     public function create()
     {
-        $rols = rol::all();
-        $abastecimientos = abastecimiento::all();
-        return view('users.create', compact('rols', 'abastecimientos'));//
+
+        return view('users.create');
+       /*  $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
+    
+        $response = Http::get($url . 'users/create');
+    
+        // Verificar si la solicitud fue exitosa (código de respuesta 2xx)
+        if ($response->successful()) {
+            $data = $response->json(); // Obtener los datos en formato JSON
+    
+            // Aquí puedes trabajar con los datos como desees
+            // Por ejemplo, podrías pasar los datos a una vista o realizar otras operaciones.
+    
+            return view('users.create', compact('data'));
+        } else {
+            // Manejar el caso en que la solicitud no fue exitosa
+            return response('Error al obtener datos de la API', 500);
+        } */
+    } 
+    public function registro(Request $request )
+    {
+
+        $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
+
+        $response = Http::post($url . 'register', [
+            'nombres' => $request->nombres,
+            'apellidos' => $request->apellidos,
+            'edad' => $request->edad,
+            'telefono' => $request->telefono,
+            'email' => $request->email,
+            'password' => $request->password,
+        ]);
+
+        // Verificar la respuesta de la API
+        if ($response->successful()) {
+            $data = $response->json();
+
+            // Almacena el token en la sesión
+            session(['auth_token' => $data['access_token']]);
+
+            // Manejar la respuesta como desees, por ejemplo, redirigir al usuario
+            return redirect()->route('login');
+        } else {
+            // Si la solicitud no fue exitosa, manejar el error
+            return response()->json(['error' => 'Error al registrar el usuario'], $response->status());
+        }
     }
-    /*public function create()
+    
+    
+    public function logins(Request $request)
     {
-        $rols = Rol::all();
-        $abastecimientos = Abastecimiento::all();
-    
-        return response()->json(compact('rols', 'abastecimientos'));
-    }*/
-    
-    
+        // Obtén las credenciales del formulario de inicio de sesión
+        $credentials = $request->only('email', 'password');
+
+        // URL de la API
+        $apiUrl = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
+
+        // Enviar solicitud POST a la API logins
+        $response = Http::post($apiUrl . 'logins', $credentials);
+        $data = $response->json();
+
+        // Verificar la respuesta de la API
+        if ($response->successful() && isset($data['accessToken'])) {
+            // Si la solicitud fue exitosa y hay un accessToken en la respuesta, pasa el nombre del usuario y el token a la sesión
+            session(['isLoggedIn' => true, 'userData' => $data['user'], 'auth_token' => $data['accessToken']]);
+        } else {
+            // Si la solicitud no fue exitosa o no hay accessToken en la respuesta, establece la sesión sin datos de usuario
+            session(['isLoggedIn' => false, 'userData' => null, 'auth_token' => null]);
+        }
+
+        // Redirige a la vista de inicio
+        return redirect()->route('index');
+    }
+
+
+
+
+
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request )
+   /*  public function store(Request $request)
     {
-        $users = new User();
-        $users->nombres = $request->nombres;
-        $users->apellidos = $request->apellidos;
-        $users->edad = $request->edad;
-        $users->telefono = $request->telefono;
-        $users->email = $request->email;
-        $users->password = bcrypt($request->password); // Encripta la contraseña
-       // $users->abastecimiento_id = $request->abastecimiento_id;
-        //$users->rol_id = $request->rol_id;
-
-// Asignar una foto predeterminada
-$users->profile_picture = 'img/default_profile_picture.png';
-
-// Procesar y guardar la foto de perfil si se proporciona una
-if ($request->hasFile('profile_picture')) {
-    $path = $request->file('profile_picture')->store('profile_pictures', 'public');
-    $users->profile_picture = $path;
-}
-$users->save();
-  return redirect()->route('login', $users);
-    }
+        try {
+            $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
     
+            // Asigna una foto predeterminada
+            $defaultProfilePicture = 'img/default_profile_picture.png';
+    
+            $response = Http::post($url . 'users/store', [
+                'nombres' => $request->nombres,
+                'apellidos' => $request->apellidos,
+                'edad' => $request->edad,
+                'telefono' => $request->telefono,
+                'email' => $request->email,
+                'password' => $request->password,
+                'profile_picture' => $request->hasFile('profile_picture')
+                    ? $request->file('profile_picture')->store('profile_pictures', 'public')
+                    : $defaultProfilePicture,
+                // Asegúrate de ajustar los demás campos según tu lógica
+            ]);
+    
+            // Verificar si la solicitud fue exitosa
+            if ($response->successful()) {
+                // La solicitud fue exitosa
+                return redirect()->route('users.index'); // Ajusta 'tu_vista' según tus necesidades
+            } else {
+                // La solicitud no fue exitosa, manejar el error
+                return view('error')->with('error', 'Error al crear el usuario en la API.');
+            }
+        } catch (\Exception $e) {
+            // Capturar cualquier excepción
+            return view('error')->with('error', 'Error al realizar la solicitud a la API.');
+        }
+    } */
+    
+ 
 
     /**
      * Display the specified resource.
@@ -92,13 +177,22 @@ $users->save();
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit( user $user)
+    public function edit($id)
     {
-
-        $rols = Rol::all(); 
-       $abastecimientos = Abastecimiento::all(); 
-        return view('users.edit', compact('user', 'rols','abastecimientos'));
+        $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
+    
+        $response = Http::get($url . 'users/' . $id);
+    
+        if ($response->successful()) {
+            $usuario = $response->json();
+    
+            return view('usuarios.edit', compact('users'));
+        } else {
+            // Manejo de error si la solicitud a la API no tiene éxito
+            return redirect()->back()->with('error', 'No se pudo obtener los datos del usuario');
+        }
     }
+    
 
     /**
      * Update the specified resource in storage.
@@ -107,38 +201,58 @@ $users->save();
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, user $user)
+/*     public function update(Request $request)
     {
-        $user->nombres = $request->nombres;
-        $user->apellidos = $request->apellidos;
-        $user->edad = $request->edad;
-        $user->telefono = $request->telefono;
-        $user->email = $request->email;
-        $user->password = $request->password;
+        $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
     
-        // Actualizar la foto de perfil si se proporciona una nueva
+        $data = [
+            'nombres' => $request->nombres,
+            'apellidos' => $request->apellidos,
+            'edad' => $request->edad,
+            'telefono' => $request->telefono,
+            'email' => $request->email,
+            'password' => $request->password,
+        ];
+    
+        // Si se proporciona una nueva foto de perfil
         if ($request->hasFile('profile_picture')) {
             // Eliminar la foto de perfil anterior si no es la predeterminada
-            if ($user->profile_picture && $user->profile_picture !== 'img/default_profile_picture.png') {
-                Storage::disk('public')->delete($user->profile_picture);
-            }
-            // Guardar la nueva foto de perfil
-            $path = $request->file('profile_picture')->store('profile_pictures', 'public');
-            $user->profile_picture = $path;
-        } elseif ($request->has('remove_profile_picture') && $request->remove_profile_picture == 1) {
-            // Si se proporciona un campo remove_profile_picture y es igual a 1, elimina la foto de perfil
-            if ($user->profile_picture && $user->profile_picture !== 'img/default_profile_picture.png') {
-                Storage::disk('public')->delete($user->profile_picture);
-                $user->profile_picture = null;
-            }
+            $data['remove_profile_picture'] = 1;
+    
+            // Agregar la nueva foto de perfil al formulario
+            $data['profile_picture'] = $request->file('profile_picture');
         }
     
-        $user->save();
+        $response = Http::put($url . 'usuarios/update/' . $request->id, $data);
     
-        return redirect()->route('users.edit', ['user' => $user->id])->with('success', 'Registro actualizado correctamente');
-
-    }
+        // Verifica si la solicitud a la API fue exitosa antes de redirigir
+        if ($response->successful()) {
+            return redirect()->route('users.index'); // Reemplaza 'usuarios.index' con la ruta correcta
+        } else {
+            // Manejo de error si la solicitud a la API no tiene éxito
+            return redirect()->back()->with('error', 'Error al actualizar el usuario en la API');
+        }
+    } */
      
+
+    public function update(Request $request)
+    {
+     
+        $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
+
+        $response = Http::put($url . 'users/update/' . $request->id, [
+         
+            'nombres' => $request->nombres,
+            'apellidos' => $request->apellidos,
+            'edad' => $request->edad,
+            'telefono' => $request->telefono,
+            'email' => $request->email,
+            'password' => $request->password,
+
+        ]);
+      
+        return redirect()->route('users.index');
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -146,19 +260,11 @@ $users->save();
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($user)
     {
-        $user = User::find($id)->delete();
-
-        return redirect()->route('users.index')->with('success', 'Usuario eliminado exitosamente');
+        $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
+        $response = Http::delete($url . 'users/destroy/' . $user);
+        return redirect()->route('users.index');
     }
-
-    public function dataUser()
-{
-
-$user= user::all();
-return response()->json($user);
-
-}
 
 }

@@ -21,9 +21,10 @@
     
             <input type="text" name="descripcion" placeholder="Descripción" required>
     
-            <select name="user_id" required>
+
+            <select name="user_id" required >
                 @foreach ($users as $user)
-                    <option value="{{ $user->id }}">{{ $user->id }} {{ $user->nombres }}</option>
+                    <option value="{{ $user['id']}}">{{ $user['nombres'] }}</option>
                 @endforeach
             </select>
     

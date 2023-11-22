@@ -41,14 +41,14 @@
             </div>
             <div class="col"></div>
 
-            @if (Auth::check())
+           {{--  @if (Auth::check()) --}}
             <!-- El usuario ha iniciado sesión, no mostrar el botón -->
-        @else
+     {{--    @else --}}
             <!-- El usuario no ha iniciado sesión, mostrar el botón -->
             <div class="col-auto">
                 <a class="btn btn-iniciar-sesion" href="{{ route('login') }}">Iniciar Sesión</a>
             </div>
-        @endif
+  {{--       @endif --}}
         </div>
     </div>
     
@@ -91,14 +91,14 @@
 
                         </ul>
                     </div> 
-                    @if (Auth::check())
+                 {{--    @if (Auth::check()) --}}
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle profile-icon" href="#" id="profileDropdown" role="button"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                             style="color: black; /* o el color que desees */">
                             <img src="{{ asset('img/default_profile_picture.png') }}" alt="Icono de perfil" style="width: 32px; height: auto;">
-                            {{ Auth::user()->nombres }}
+                          {{--   {{ Auth::user()->nombres }} --}}
                         </a>
                         
                             <div class="dropdown-menu" aria-labelledby="profileDropdown">
@@ -120,7 +120,7 @@
                                 <i class="fas fa-shopping-cart" style="color: black; font-size: 20px;"></i> <!-- Icono de carrito de compras -->
                             </a>
                         </li>
-                    @endif
+                  {{--   @endif --}}
                 </div>
             </div>
             </nav>

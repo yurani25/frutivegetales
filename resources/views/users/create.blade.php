@@ -56,7 +56,7 @@ function validateForm() {
 <body>
     <h1>Registrarse</h1>
     <div class="users-form-uno">
-        <form name="myForm" action="{{ route('users.store') }}" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
+        <form  action="{{ route('registro') }}" method="post" {{-- enctype="multipart/form-data" --}} {{-- onsubmit="return validateForm();" --}}>
             @csrf
             <input type="text" name="nombres" placeholder="Nombres">
             <div id="nombresError" class="error"></div>
@@ -76,17 +76,11 @@ function validateForm() {
             <input type="password" name="password" placeholder="Contraseña">
             <div id="passwordError" class="error"></div>
             
-            <input type="submit" value="Enviar formulario">
-          <!--  <select name="rol_id">
-                @foreach($rols as $rol)
-                    <option value="{{ $rol->id }}">{{ $rol->nombre }}</option>
-                @endforeach
-            </select>
-            <select name="abastecimiento_id">
-                @foreach($abastecimientos as $abastecimiento)
-                    <option value="{{ $abastecimiento->id }}">{{ $abastecimiento->nombre }}</option>
-                @endforeach
-            </select>-->
+         {{--    <input type="submit" value="Enviar formulario"> --}}
+            <div class="">
+                <button type="submit" class="btn btn-primary btn-lg btn-block btn-login">Registrarte</button>
+            </div>
+ 
      
         </form>
     </div>

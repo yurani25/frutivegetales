@@ -27,35 +27,32 @@
                 <th>Edad</th>
                 <th>Teléfono</th>
                 <th>Email</th>
-                <th>Contraseña</th>
+            {{--     <th>Contraseña</th> --}}
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($user as $user)
+            @if(isset($data))
+            @foreach ($data as $user)
             <tr>
-                <td>{{$user->id}}</td>
-              <!--  <td>{{$user->rol_id}}</td>
-                <td>{{$user->abastecimiento_id}}</td> -->
-                <td>{{$user->profile_picture}}</td>
-                <td>{{$user->nombres}}</td>
-               
-                <td>{{$user->apellidos}}</td>
-                <td>{{$user->edad}}</td>
-                <td>{{$user->telefono}}</td>
-                <td>{{$user->email}}</td>
-                <td>{{$user->password}}</td>
+                <td>{{$user['id']}}</td>
+                <td>{{$user['profile_picture']}}</td>
+                <td>{{$user['nombres']}}</td>
+                <td>{{$user['apellidos']}}</td>
+                <td>{{$user['edad']}}</td>
+                <td>{{$user['telefono']}}</td>
+                <td>{{$user['email']}}</td>
+               {{--  <td>{{$user['password']}}</td> --}}
                 <td>
-                    <form action="{{ route('users.destroy', $user->id) }}" method="POST">
-                        @csrf
-                        @method('delete')
-                        <button class="delete-button" type="submit">Eliminar</button>
-                    </form>
-                    <button class="edit-button" onclick="window.location.href='{{route('users.edit', $user->id)}}'">Editar</button>
+
+
+                    <a class="delete-button" href="{{ route('users.destroy', $user['id']) }}">eliminar </a>
+                    <a class="edit-button" href="{{ route('users.edit', $user['id']) }}">Editar</a>
 
                 </td>
             </tr>
             @endforeach
+            @endif
         </tbody>
     </table>
 

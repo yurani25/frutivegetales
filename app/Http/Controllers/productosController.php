@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\producto;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Facades\Http;
+
 
 class productosController extends Controller
 {
@@ -15,172 +17,125 @@ class productosController extends Controller
      */
     public function index()
     {
-        $productos= producto::all();
 
-     return view('productos.index',compact('productos'));
-    
+        $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
+
+        $response =  Http::get($url.'productos');
+
+        $data = $response->json();
+
+        return view('productos.index', compact('data'));
+
     }
 
-    public function catalogo()
-    {
-        $productos = producto::all();
-       
-        foreach($productos as $producto){
-             if($producto->imagen){
-            $producto->imagen = asset('storage/productos/' . $producto->imagen);
-            }
-         } 
-          //  return $productos;
-     return view('index',compact('productos'));
-     
-    
-    }
-    
-    public function inorganico()
-    {
-        $productos = producto::all();
-       
-        foreach($productos as $producto){
-             if($producto->imagen){
-            $producto->imagen = asset('storage/productos/' . $producto->imagen);
-            }
-         } 
-          //  return $productos;
-     return view('inorganico',compact('productos'));
-     
-    
-    }
+ public function catalogo()
+{
+    return view('index');
+}
 
- 
-
-    
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        $users = User::all();
-  return view('productos.create' , compact('users'));
-
-     
+        $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
+        
+        // Obtener productos desde la API
+        $responseProductos = Http::get($url . 'productos');
+        $productos = $responseProductos->json();
+        
+        // Obtener temporadas desde la API
+        $responseusers = Http::get($url . 'users');
+        
+        // Verificar si la respuesta es exitosa y obtener los datos
+        $users = $responseusers->successful() ? $responseusers->json() : null;
+        
+        return view('productos.create', ['productos' => $productos, 'users' => $users]);
     }
+    
+    
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(Request $request)
     {
-        $productos= new producto();
-        $productos->nombres=$request->nombres;
-        $productos->tiempo_reclamo=$request->tiempo_reclamo;
-        $productos->imagen=$request->imagen;
-        $productos->precio=$request->precio;
-        $productos->descripcion=$request->descripcion;
-        $productos->user_id=$request->user_id;
+        try {
+            $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
+    
+            $response = Http::post($url.'productos/store', [
+                'nombres' => $request->nombres,
+                'tiempo_reclamo' => $request->tiempo_reclamo,
+                'precio' => $request->precio,
+                'descripcion' => $request->descripcion,
+                'user_id' => $request->user_id, 
+            ]);
 
-          // Subir y almacenar la imagen
-        if ($request->hasFile('imagen')) {
-            $imageName = time() . '.' . $request->file('imagen')->getClientOriginalExtension();
-            $imagenPath = $request->file('imagen')->storeAs('productos', $imageName, 'public');
-            $productos->imagen = $imageName;
-           //$product->image = $imagenPath;
-
+          
+    
+            // Verificar si la solicitud fue exitosa
+            if ($response->successful()) {
+                // La solicitud fue exitosa
+                return redirect()->route('productos.index');
+            } else {
+                // La solicitud no fue exitosa, manejar el error
+                return view('error')->with('error', 'Error al almacenar el producto en la API.');
+            }
+        } catch (\Exception $e) {
+            // Capturar cualquier excepción
+            return view('error')->with('error', 'Error al realizar la solicitud a la API.');
         }
+    }
+    
 
+    public function update(Request $request)
+    {
+     
+        $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
 
-        $productos->save();
-
-         return Redirect()->route('productos.index',$productos); 
+        $response = Http::put($url . 'productos/update/' . $request->id, [
+         
+            'nombres' => $request->nombres,
+            'tiempo_reclamo' => $request->tiempo_reclamo,
+            'precio' => $request->precio,
+            'descripcion' => $request->descripcion,
+            'user_id' => $request->user_id,
 
         
+        ]);
+      
+        return redirect()->route('productos.index');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
 
-    //para detalle del producto
-    public function show($id)
+    public function edit($id)
     {
-        $producto = producto::find($id);
-    
-        if (!$producto) {
-            abort(404); // Mostrar una página de error 404 si el producto no se encuentra
-        }
-    
-        return view('productos.detalle', compact('producto' ));
-    }
-    
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(producto $producto)
+        $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
+
+        $response = Http::get($url . 'productos/edit/' . $id);
+
+        if ($response->successful()) {
+            $producto = $response->json();
+
+            // Obtener todos los season disponibles
+            $userResponse = Http::get($url . 'users');
+            $users = $userResponse->json();
+
+            $user_id = $producto['user_id']; // Establecer el season actual del usuario
+
+            return view('productos.edit', compact('producto', 'users', 'user_id'));
+        } else {
+            // Manejo de error si la solicitud a la API no tiene éxito
+            return redirect()->back()->with('error', 'No se pudo obtener los datos del usuario');
+        } 
+    }
+
+    public function destroy($producto)
     {
-        $users = User::all(); 
-        return view('productos.edit', compact('producto', 'users'));
+
+        $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
+        $response = Http::delete($url . 'productos/destroy/' . $producto);
+
+        return redirect()->route('productos.index');
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, producto $producto)
-    {
-         // Actualizar los campos
-        $producto->nombres = $request->nombres;
-        $producto->tiempo_reclamo = $request->tiempo_reclamo;
-        $producto->precio = $request->precio;
-        $producto->descripcion = $request->descripcion;
-        $producto->user_id = $request->user_id;
-    
-        // Verificar si se proporcionó una nueva imagen
-        if ($request->hasFile('nueva_imagen')) {
-            $imageName = time() . '.' . $request->file('nueva_imagen')->getClientOriginalExtension();
-            $imagenPath = $request->file('nueva_imagen')->storeAs('productos', $imageName, 'public');
-            $producto->imagen = $imageName; 
-        }
-    
-        $producto->save();
-    
-        return redirect()->route('productos.index')->with('success', 'Registro actualizado correctamente');
-    }
-    
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        $producto = producto::find($id)->delete();
-
-        return redirect()->route('productos.index')->with('success', 'Usuario eliminado exitosamente');
-    }
-    public function dataproduc()
-{
-
-$producto= producto::all();
-return response()->json($producto);
 
 }
-}
-
 

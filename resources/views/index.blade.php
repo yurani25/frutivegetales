@@ -139,7 +139,32 @@
     </nav>
     
     
-
+{{-- <!-- Products Start -->
+<div class="container-fluid pt-5 pb-3">
+    <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span style="color:#15c815 ;">Productos destacados</span></h2>
+    <div class="row px-xl-5">
+        @foreach ($data['index'] as $producto)
+        <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+            <div class="product-item bg-light mb-4">
+                <div class="product-img position-relative overflow-hidden">
+                    <a href="{{ route('productos.show', $producto['id']) }}">
+                        <img class="img-fluid product-image" src="{{ $producto['imagen'] }}" alt="">
+                        <div class="product-action"></div>
+                    </a>
+                </div>
+                <div class="text-center py-4">
+                    <a class="h6 text-decoration-none text-truncate" href="{{ route('productos.show', $producto['id']) }}">{{ $producto['nombres'] }}</a>
+                    <div class="d-flex align-items-center justify-content-center mt-2">
+                        <h5>${{ $producto['precio'] }}</h5>
+                        <h6 class="text-muted ml-3"><del></del></h6>
+                    </div>
+                    <a class="btn btn-primary mt-3" href="">añadir a carrito</a>
+                </div>
+            </div>
+        </div>
+        @endforeach
+    </div>
+</div> --}}
 
    <!-- Carrusel -->
 <div id="myCarousel" class="carousel slide" data-ride="carousel"  data-interval="2000">
@@ -173,7 +198,7 @@
 <br>
 
 
- <!-- Products Start -->
+{{--  <!-- Products Start -->
 <div class="container-fluid pt-5 pb-3">
     <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span style="color:#15c815 ;">Productos destacados</span></h2>
     <div class="row px-xl-5">
@@ -197,7 +222,7 @@
         </div>
         @endforeach
     </div>
-</div>
+</div> --}}
 
 
 
