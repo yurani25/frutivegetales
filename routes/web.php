@@ -41,9 +41,10 @@ Route::post('logout', 'Auth\LoginController@logout')->name('logout'); */
  Route::get('users', [usersController::class, 'index'])->name('users.index');
  
  //editar 
- Route::get('users/{user}/edit', [usersController::class, 'edit'])->name('users.edit');
+ Route::get('users/edit/{id}', [usersController::class, 'edit'])->name('users.edit');
 
- Route::put('/users/update', [usersController::class, 'update'])->name('users.update');
+ 
+ Route::put('users/{id}/update', [usersController::class, 'update'])->name('users.update');
 
 
 //eliminar
@@ -56,7 +57,7 @@ Route::get('/usuario/create',[usersController::class, 'createUser'])->name('user
 route::get('login',[usersController::class,'login'])->name('login');
 route::post('logins',[usersController::class,'logins'])->name('logins');
 route::post('registro',[usersController::class,'registro'])->name('registro');
-/* route::get('logout',[usersController::class,'logout'])->name('logout'); */
+ route::get('logout',[usersController::class,'logout'])->name('logout'); 
 
 
  //productos
@@ -71,8 +72,9 @@ Route::get('productos/create', [productosController::class, 'create'])->name('pr
 Route::post('productos', [productosController::class, 'store'])->name('productos.store');
 Route::get('productos', [productosController::class, 'index'])->name('productos.index');
 
-/* 
-Route::get('productos/{producto}', [productosController::class, 'show'])->name('productos.show'); */
+
+Route::get('productos/{id}', [productosController::class, 'show'])->name('productos.show');
+ 
 
 
 //editar
@@ -81,6 +83,7 @@ Route::post('/productos/update', [productosController::class, 'update'])->name('
 
 //eliminar
 Route::get('productos/{producto}',[productosController::class, 'destroy'])->name('productos.destroy');
+
 
 ////
 
@@ -157,12 +160,13 @@ Route::post('pqrs', [pqrsController::class, 'store'])->name('pqrs.store');
 Route::get('pqr', [pqrsController::class, 'index'])->name('pqrs.index');
 
 //editar
-Route::get('pqrs/{id}/edit', [pqrsController::class, 'edit'])->name('pqrs.edit');
-Route::put('pqrs/{pqr}', [pqrsController::class, 'update'])->name('pqrs.update');
+Route::get('pqrs/{pqr}/edit', [pqrsController::class, 'edit'])->name('pqrs.edit');
+
+Route::post('pqrs/{id}/update', [pqrsController::class, 'update'])->name('pqrs.update');
 
 
 //eliminar
-Route::delete('pqrs/{pqr}',[pqrsController::class, 'destroy'])->name('pqrs.destroy');
+Route::get('pqrs/{pqr}',[pqrsController::class, 'destroy'])->name('pqrs.destroy');
 
 
 //carrito de compras
@@ -189,6 +193,9 @@ Route::get('inorganico',[ productosController::class ,'inorganico'])->name('inor
 /* Route::get('index', function () {
     return view('index');
 })->name('index'); */
+Route::get('error', function () {
+    return view('error');
+});
 
 Route::get('registro', function () {
     return view('registro');

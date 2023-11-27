@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Http;
 use App\Models\rol;
 use Illuminate\Http\Request;
 
@@ -12,10 +12,18 @@ class rolsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function index()
     {
-        $rols= rol::all();
-        return view('rols.index',compact('rols'));
+
+        $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
+
+        $response =  Http::get($url.'rols');
+
+        $data = $response->json();
+
+        return view('rols.index', compact('data'));
+
     }
 
     /**

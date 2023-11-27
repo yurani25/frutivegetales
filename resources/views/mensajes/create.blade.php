@@ -15,7 +15,7 @@
      
             <select name="user_id">
                 @foreach ($users as $user)
-                    <option value="{{ $user->id }}">{{ $user->id }} - {{ $user->nombres }}</option>
+                    <option value="{{ $user['id'] }}"> {{ $user['nombres'] }}</option>
                 @endforeach
             </select>
             <input type="submit" value="enviar formulario">

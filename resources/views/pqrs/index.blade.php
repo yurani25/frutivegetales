@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,39 +13,35 @@
             <tr>
                 <th>ID</th>
                 <th>User ID</th>
-                <th>tipo</th>
+                <th>Tipo</th>
                 <th>Motivo</th>
                 <th>Acciones</th>
-
             </tr>
         </thead>
         <tbody>
-            @foreach ($pqrs as $pqr)
-            <tr>
-                <td>{{$pqr->id}}</td>
-                <td>{{$pqr->user_id}}</td>
-                <td>{{$pqr->tipo}}</td>
-                <td>{{$pqr->motivo}}</td>
+            @if (!is_null($data) && (is_array($data) || is_object($data)))
+                @foreach ($data as $pqr)
+                    <tr>
+                        <td>{{$pqr['id']}}</td>
+                        <td>{{$pqr['user_id']}}</td>
+                        <td>{{$pqr['tipo']}}</td>
+                        <td>{{$pqr['motivo']}}</td>
 
-                <td>
-                    
-                        <form action="{{ route('pqrs.edit', ['id' => $pqr->id]) }}" method="GET">
-                            @csrf
-                            <button type="submit" class="edit-button">Editar</button>
-                        </form>
-                    <form action="{{ route('pqrs.destroy', $pqr->id) }}" method="POST">
-                        @csrf
-                        @method('delete')
-                        <button type="submit" class="delete-button ">Eliminar</button>
-                    </form>
-
-                </td>
-            </tr>
+                        <td>
+                            <a class="delete-button" href="{{ route('pqrs.destroy', $pqr['id']) }}">Eliminar </a>                                  
+                            <a href="{{ route('pqrs.edit', $pqr['id']) }}" class="edit-button">Editar</a>
+                        </td>
+                    </tr>
+                @endforeach
+            @else
+                <tr>
+                    <td colspan="5">No hay datos disponibles</td>
+                </tr>
+            @endif
         </tbody>
-        @endforeach
     </table>
 
-    <a  class="add-button"  href="{{route('pqrs.create')}}">Agregar</a>
-    <a class="add-button" href="{{route('index')}}">inicio</a>
+    <a class="add-button" href="{{route('pqrs.create')}}">Agregar</a>
+    <a class="add-button" href="{{route('index')}}">Inicio</a>
 </body>
 </html>

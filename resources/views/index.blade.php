@@ -39,14 +39,12 @@
             </div>
             <div class="col"></div>
 
-            @if (Auth::check())
-            <!-- El usuario ha iniciado sesión, no mostrar el botón -->
-        @else
-            <!-- El usuario no ha iniciado sesión, mostrar el botón -->
-            <div class="col-auto">
-                <a class="btn btn-iniciar-sesion" href="{{ route('login') }}">Iniciar Sesión</a>
-            </div>
-        @endif
+       @if(!session('isLoggedIn'))
+    <div class="col-auto">
+        <a class="btn btn-iniciar-sesion" href="{{ route('login') }}">Iniciar Sesión</a>
+    </div>
+@endif
+    
         </div>
     </div>
     
@@ -86,46 +84,52 @@
                         <a class="nav-link" href="{{route('nosotros')}}">Nosotros</a>
                     </li>
 
-    <li class="nav-item dropdown"> 
+                    <li class="nav-item dropdown">
+                        @if(session('isLoggedIn'))
                         <a class="nav-link dropdown-toggle" href="#" id="categoriasDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Administrar 
+                            Administrar
                         </a>
                         <div class="dropdown-menu" aria-labelledby="categoriasDropdown">
-                            <a class="dropdown-item" href="{{ route('productos.index') }}">crear producto</a>
-                            <a class="dropdown-item" href="{{ route('users.index') }}">crear usuario</a>
-                            <a class="dropdown-item" href="{{ route('compras.index') }}">crear compras</a>
-                            <a class="dropdown-item" href="{{ route('cars.index') }}">carrito_compras</a>
-                            <a class="dropdown-item" href="{{ route('mensajes.index') }}">mensajes</a>
-                            <a class="dropdown-item" href="{{ route('pagos.index') }}">pagos</a>
-                            <a class="dropdown-item" href="{{ route('rols.index') }}">rols</a>
-                            <a class="dropdown-item" href="{{ route('pqrs.index') }}">PQRS</a>
-                            <a class="dropdown-item" href="{{ route('abastecimientos.index') }}">abastecimientos</a>
-
-                </ul>
+                          
+                                <a class="dropdown-item" href="{{ route('productos.index') }}">crear producto</a>
+                                <a class="dropdown-item" href="{{ route('users.index') }}">crear usuario</a>
+                                <a class="dropdown-item" href="{{ route('compras.index') }}">crear compras</a>
+                                <a class="dropdown-item" href="{{ route('cars.index') }}">carrito_compras</a>
+                                <a class="dropdown-item" href="{{ route('mensajes.index') }}">mensajes</a>
+                                <a class="dropdown-item" href="{{ route('pagos.index') }}">pagos</a>
+                                <a class="dropdown-item" href="{{ route('rols.index') }}">rols</a>
+                                <a class="dropdown-item" href="{{ route('pqrs.index') }}">PQRS</a>
+                                <a class="dropdown-item" href="{{ route('abastecimientos.index') }}">abastecimientos</a>
+                            @endif
+                        </div>
+                    </li>
+                    
             </div> 
-            @if (Auth::check())
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle profile-icon" href="#" id="profileDropdown" role="button"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                    style="color: black; /* o el color que desees */">
-                    <img src="{{ asset('img/default_profile_picture.png') }}" alt="Icono de perfil" style="width: 32px; height: auto;">
-                    {{ Auth::user()->nombres }}
+            @if (session('isLoggedIn'))
+    <ul class="navbar-nav ml-auto">
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle profile-icon" href="#" id="profileDropdown" role="button"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                style="color: black; /* o el color que desees */">
+                <img src="{{ asset('img/default_profile_picture.png') }}" alt="Icono de perfil"
+                    style="width: 32px; height: auto;">
+                {{ session('userData')['nombres'] }}
+            </a>
+
+            <div class="dropdown-menu" aria-labelledby="profileDropdown">
+                <a class="dropdown-item"
+                 href="{{ route('users.edit', ['id' => session('userData')['id']]) }}">Actualizar Perfil</a>
+                <a class="dropdown-item" href="{{ route('productos.create') }}">Vender Producto</a>
+                <a class="dropdown-item" href="{{ route('logout') }}"
+                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    Cerrar Sesión
                 </a>
-                
-                    <div class="dropdown-menu" aria-labelledby="profileDropdown">
-                        <a class="dropdown-item" href="{{ route('users.edit', ['user' => Auth::user()]) }}">Actualizar Perfil</a>
-                        <a class="dropdown-item" href="{{route('productos.create')}}">Vender Producto</a>
-                        <a class="dropdown-item" href="{{ route('logout') }}"
-                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            Cerrar Sesión
-                        </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                            @csrf
-                        </form>
-                    </div>
-                </li>
-            </ul>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                    @csrf
+                </form>
+            </div>
+        </li>
+    </ul>
 
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
@@ -139,32 +143,8 @@
     </nav>
     
     
-{{-- <!-- Products Start -->
-<div class="container-fluid pt-5 pb-3">
-    <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span style="color:#15c815 ;">Productos destacados</span></h2>
-    <div class="row px-xl-5">
-        @foreach ($data['index'] as $producto)
-        <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
-            <div class="product-item bg-light mb-4">
-                <div class="product-img position-relative overflow-hidden">
-                    <a href="{{ route('productos.show', $producto['id']) }}">
-                        <img class="img-fluid product-image" src="{{ $producto['imagen'] }}" alt="">
-                        <div class="product-action"></div>
-                    </a>
-                </div>
-                <div class="text-center py-4">
-                    <a class="h6 text-decoration-none text-truncate" href="{{ route('productos.show', $producto['id']) }}">{{ $producto['nombres'] }}</a>
-                    <div class="d-flex align-items-center justify-content-center mt-2">
-                        <h5>${{ $producto['precio'] }}</h5>
-                        <h6 class="text-muted ml-3"><del></del></h6>
-                    </div>
-                    <a class="btn btn-primary mt-3" href="">añadir a carrito</a>
-                </div>
-            </div>
-        </div>
-        @endforeach
-    </div>
-</div> --}}
+
+
 
    <!-- Carrusel -->
 <div id="myCarousel" class="carousel slide" data-ride="carousel"  data-interval="2000">
@@ -197,32 +177,42 @@
 </div>
 <br>
 
-
-{{--  <!-- Products Start -->
+<!-- Products Start -->
 <div class="container-fluid pt-5 pb-3">
     <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span style="color:#15c815 ;">Productos destacados</span></h2>
     <div class="row px-xl-5">
-        @foreach ($productos as $producto)
-        <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
-            <div class="product-item bg-light mb-4">
-                <div class="product-img position-relative overflow-hidden">
-                    <a href="{{ route('productos.show', $producto->id) }}"> <!-- Enlace al detalle del producto -->
-                    <img class="img-fluid product-image" src="{{$producto->imagen}}" alt="">
-                    <div class="product-action">
+        @if(isset($productos) && count($productos) > 0)
+            @foreach ($productos as $producto)
+                <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                    <div class="product-item bg-light mb-4">
+                        <div class="product-img position-relative overflow-hidden">
+
+                            <a href="{{ route('productos.show', $producto['id']) }}"> 
+                                <img class="img-fluid product-image" src="{{ $producto['imagen'] }}" alt="Imagen del producto">
+                                <div class="product-action">
+                                    <!-- Puedes agregar acciones adicionales aquí si es necesario -->
+                                </div>
+                            </a>
+                        </div>
+                        <div class="text-center py-4">
+                             <a class="h6 text-decoration-none text-truncate" href="{{ route('productos.show', $producto['id']) }}">{{ $producto['nombres'] }}</a> 
+{{--                             <a class="h6 text-decoration-none text-truncate" href="#">{{ $producto['nombres'] }}</a> --}}
+                            <div class="d-flex align-items-center justify-content-center mt-2">
+                                <h5>${{ $producto['precio'] }}</h5><h6 class="text-muted ml-3"><del></del></h6>
+                            </div>
+                            <a class="btn btn-primary mt-3" href="">Añadir a carrito </a>
+                        </div>
                     </div>
                 </div>
-                <div class="text-center py-4">
-                    <a class="h6 text-decoration-none text-truncate" href="{{ route('productos.show', $producto->id) }}">{{ $producto->nombres }}</a>
-                    <div class="d-flex align-items-center justify-content-center mt-2">
-                        <h5>${{ $producto->precio }}</h5><h6 class="text-muted ml-3"><del></del></h6>
-                    </div>
-                    <a class="btn btn-primary mt-3" href="">añadir a carrito </a>
-                </div>
+            @endforeach
+        @else
+            <div class="col-12">
+                <p>No hay productos disponibles.</p>
             </div>
-        </div>
-        @endforeach
+        @endif
     </div>
-</div> --}}
+</div>
+
 
 
 

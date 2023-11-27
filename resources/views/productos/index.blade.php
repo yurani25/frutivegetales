@@ -15,52 +15,46 @@
     </div>
     @endif
 
-<table class="crud-table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>user_id</th>
-            <th>Productos</th>
-            <th>Tiempo de Reclamo</th>
-     {{--        <th>Imagen</th> --}}
-            <th>Precio</th>
-            <th>descripcion</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach ($data as $producto)
-        <tr>
-            <td>{{$producto['id'] }}</td>
-            <td>{{$producto ['user_id']}}</td>
-            <td>{{$producto['nombres']}}</td>
-            <td>{{$producto['tiempo_reclamo']}}</td>
-         {{-- 
-            <td>
-                @if ($producto->imagen)
-                    <img class="product-image" src="{{ asset('storage/productos/' . $producto->imagen) }}" alt="Imagen del producto">
-                @else
-                    No hay imagen
-                @endif
-            </td> --}}
-            <td>{{$producto['precio']}}</td>
-            <td>{{$producto['descripcion']}}</td>
-            <td>
-       
-                <a class="delete-button" href="{{ route('productos.destroy', $producto['id']) }}">eliminar </a>
-                                  
-              <a href="{{ route('productos.edit', $producto['id']) }}" class="edit-button">Editar</a>
+    <table class="crud-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>user_id</th>
+                <th>nombre</th>
+                <th>Tiempo de Reclamo</th>
+                <th>Imagen</th> {{-- Descomentar esta línea --}}
+                <th>Precio</th>
+                <th>descripcion</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($data as $producto)
+            <tr>
+                <td>{{$producto['id'] }}</td>
+                <td>{{$producto ['user_id']}}</td>
+                <td>{{$producto['nombres']}}</td>
+                <td>{{$producto['tiempo_reclamo']}}</td>
+                <td>
+                    @if ($producto['imagen'])
+                        <img class="product-image" src="{{ $producto['imagen'] }}" alt="Imagen del producto">
+                    @else
+                        No hay imagen
+                    @endif
+                </td>
+                <td>{{$producto['precio']}}</td>
+                <td>{{$producto['descripcion']}}</td>
+                <td>
+                    <a class="delete-button" href="{{ route('productos.destroy', $producto['id']) }}">Eliminar </a>                                  
+                    <a href="{{ route('productos.edit', $producto['id']) }}" class="edit-button">Editar</a>
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
 
-            </td>
-        </tr>
-   
-    </tbody>
-    @endforeach
-</table>
-
-
-<a class="add-button" href="{{ route('productos.create') }}">Agregar</a>
-<a class="add-button" href="{{route('index')}}">inicio</a>
+    <a class="add-button" href="{{ route('productos.create') }}">Agregar</a>
+    <a class="add-button" href="{{ route('index') }}">Inicio</a>
 </div>
 
 </body>

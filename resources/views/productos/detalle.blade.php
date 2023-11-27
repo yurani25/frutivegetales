@@ -18,7 +18,7 @@
      <link href="{{ asset('css/inicio.css') }}" rel="stylesheet">
      <link href="{{ asset('css/contac.css') }}" rel="stylesheet">
      <link href="{{ asset('css/inicio3.css') }}" rel="stylesheet">
-     <title>{{ $producto->nombres }}</title>
+     <title>{{ $producto['nombres']}}</title>
      <link href="{{ asset('css/detalle0.css') }}" rel="stylesheet">
 </head>
 
@@ -105,22 +105,20 @@
         <div class="row">
             <div class="col-md-6">
                 <!-- Aumenta el tamaño de la imagen y agrega estilos adicionales -->
-                <img class="product-image" src="{{ asset('storage/productos/' . $producto->imagen) }}" alt="{{ $producto->nombres }}" style="max-width: 100%; height: auto; object-fit: cover;">
+                <img class="product-image" src="{{ asset('storage/productos/' . $producto['imagen']) }}" alt="{{ $producto['nombres'] }}" style="max-width: 100%; height: auto; object-fit: cover;">
             </div>
             <div class="col-md-6">
-                <h1>{{ $producto->nombres }}</h1>
+                <h1>{{ $producto['nombres'] }}</h1>
 
-                 <!-- Ajusta el estilo de la descripción -->
-                 <p class="product-description" style="white-space: pre-line; overflow: hidden; text-overflow: ellipsis; max-height: 100%;">{{ $producto->descripcion }}</p>
+                <!-- Ajusta el estilo de la descripción -->
+                <p class="product-description" style="white-space: pre-line; overflow: hidden; text-overflow: ellipsis; max-height: 100%;">{{ $producto['descripcion'] }}</p>
             
-                <p class="product-price">Precio: ${{ $producto->precio }}</p>
+                <p class="product-price">Precio: ${{ $producto['precio'] }}</p>
                 
-               
+                <!-- Agrega más detalles según tus necesidades -->
+                <h5> categoría : inorganico</h5>
 
-         <!-- Agrega más detalles según tus necesidades -->
-         <h5> categoria : inorganico </h5>
-
-                <!-- Agrega un formulario para agregar al carrito -->
+                <!-- Deja la acción del formulario vacía por ahora -->
                 <form action="" method="post">
                     @csrf
                     <button type="submit" class="btn btn-primary-dos">Añadir al carrito</button>
@@ -129,6 +127,7 @@
         </div>
     </div>
 </div>
+
 
 
 

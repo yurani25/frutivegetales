@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\pqr;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 
 class pqrsController extends Controller
@@ -16,8 +17,14 @@ class pqrsController extends Controller
      */
     public function index()
     {
-        $pqrs=pqr::all();
-        return view('pqrs.index', compact('pqrs'));
+
+        $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
+
+        $response =  Http::get($url.'pqrs');
+
+        $data = $response->json();
+
+        return view('pqrs.index', compact('data'));
 
     }
 
@@ -40,19 +47,32 @@ class pqrsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
     public function store(Request $request)
     {
-        $pqrs = new pqr();
-        $pqrs->user_id=$request->user_id;
-        $pqrs->motivo = $request->motivo;
-        $pqrs->tipo=$request->tipo;
-        $pqrs->save();
-
-            // Guarda un mensaje de éxito en la sesión
-          session()->flash('success', 'La PQRS se ha enviado correctamente.');
-
-        return Redirect()->route('pqrs.create',$pqrs);
+        try {
+            $url = env('API_URL', 'http://127.0.0.1:8000/api/'); // Ajusta la URL según tu configuración
+    
+            $response = Http::post($url . 'pqrs/store', [
+                'user_id' => $request->user_id,
+                'motivo' => $request->motivo,
+                'tipo' => $request->tipo,
+            ]);
+    
+            // Verificar si la solicitud fue exitosa
+            if ($response->successful()) {
+                // La solicitud fue exitosa
+                return redirect()->route('pqrs.index');
+            } else {
+                // La solicitud no fue exitosa, manejar el error
+                return view('error')->with('error', 'Error al enviar la PQRS a la API.');
+            }
+        } catch (\Exception $e) {
+            // Capturar cualquier excepción
+            return view('error')->with('error', 'Error al realizar la solicitud a la API.');
+        }
     }
+    
 
     /**
      * Display the specified resource.
@@ -71,35 +91,56 @@ class pqrsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
-        $pqr = pqr::find($id); // Encuentra el PQRS por su ID
-        $usuarios = User::all(); // Obtén la lista de usuarios registrados
-    
-        return view('pqrs.edit', compact('pqr', 'usuarios'));
-    }
+  // Obtener datos para editar
+  public function edit($id)
+  {
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        $pqrs = pqr::find($id);
-        if (!$pqrs) {
-            return redirect()->route('pqrs.index')->with('error', 'El PQRS no existe.');
+      $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
+
+      $response = Http::get($url . 'pqrs/edit/' . $id);
+
+      if ($response->successful()) {
+          $pqr = $response->json();
+
+          // Obtener todos los season disponibles
+          $userResponse = Http::get($url . 'users');
+          $users = $userResponse->json();
+
+          $user_id = $pqr['user_id']; // Establecer el season actual del usuario
+
+          return view('pqrs.edit', compact('pqr', 'users', 'user_id'));
+      } else {
+          // Manejo de error si la solicitud a la API no tiene éxito
+          return redirect()->back()->with('error', 'No se pudo obtener los datos del usuario');
+      } 
+  }
+
+// Actualizar datos
+public function update(Request $request, $id)
+{
+    try {
+        // Realizar solicitud PUT a la API para actualizar el PQRS
+        $response = Http::put(env('URL_SERVER_API') . 'pqrs/update/' . $id, [
+            'user_id' => $request->user_id,
+            'motivo' => $request->motivo,
+            'tipo' => $request->tipo,
+            // ... otros campos
+        ]);
+
+        if ($response->successful()) {
+            // Redirigir a la página principal o a la que consideres
+            return redirect()->route('pqrs.index')->with('success', 'Registro actualizado correctamente');
+        } else {
+            // Manejar el error si la solicitud a la API no es exitosa
+            return view('error')->with('error', 'Error al actualizar el PQRS en la API.');
         }
-    
-        $pqrs->user_id = $request->user_id;
-        $pqrs->motivo = $request->motivo;
-        $pqrs->tipo = $request->tipo;
-        $pqrs->save();
-    
-        return redirect()->route('pqrs.index')->with('success', 'Registro actualizado correctamente');
+    } catch (\Exception $e) {
+        // Capturar cualquier excepción
+        return view('error')->with('error', 'Error al realizar la solicitud a la API: ' . $e->getMessage());
     }
+}
+
+    
     
 
     /**
@@ -108,10 +149,14 @@ class pqrsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        $pqrs = pqr::find($id)->delete();
-
-        return redirect()->route('pqrs.index')->with('success', 'Usuario eliminado exitosamente');
-    }
+ 
+     public function destroy($pqr)
+     {
+         $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
+         
+         // Envia el parámetro $pqr como parte de la URL
+         $response = Http::delete($url . 'pqrs/destroy/' . $pqr);
+     
+         return redirect()->route('pqrs.index');
+     }
 }

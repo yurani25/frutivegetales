@@ -35,12 +35,23 @@ public function index()
      *
      * @return \Illuminate\Http\Response
      */
+
     public function create()
     {
-        $users = User::all();
-        return view('mensajes.create', compact('users') );
+        $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
+        
+        // Obtener productos desde la API
+        $responseMensajes = Http::get($url . 'mensajes');
+        $mensajes = $responseMensajes->json();
+        
+        // Obtener temporadas desde la API
+        $responseusers = Http::get($url . 'users');
+        
+        // Verificar si la respuesta es exitosa y obtener los datos
+        $users = $responseusers->successful() ? $responseusers->json() : null;
+        
+        return view('mensajes.create', ['mensajes' => $mensajes, 'users' => $users]);
     }
-
     /**
      * Store a newly created resource in storage.
      *

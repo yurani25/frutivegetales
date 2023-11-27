@@ -23,20 +23,20 @@
             
         </tr>
     </thead>
-    @foreach ($rols as $rol)
+    @foreach ($data as $rol)
     <tbody>
         <tr>
-            <td>{{$rol->id}} </td>
-            <td>{{$rol->nombre}}</td>
+            <td>{{$rol['id']}} </td>
+            <td>{{$rol['nombre']}}</td>
             
             <td>
-                <form action="{{ route('rols.destroy', $rol->id) }}" method="POST">
+                <form action="{{ route('rols.destroy', $rol['id']) }}" method="POST">
                     @csrf
                     @method('delete')
                     <button type="submit" class="delete-button ">Eliminar</button>
                 </form>
 
-                <form action="{{ route('rols.edit', $rol->id) }}" method="GET">
+                <form action="{{ route('rols.edit', $rol['id']) }}" method="GET">
                     @csrf
                     <button class="edit-button" type="submit">Editar</button>
                 </form>

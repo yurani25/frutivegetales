@@ -30,7 +30,7 @@
                    
                     <div class="card-body">
                   
-                        <form method="POST" action="{{ route('logins') }}">
+                        <form method="post" action="{{ route('logins') }}">
                             @csrf
 
                             <div class="form-group">

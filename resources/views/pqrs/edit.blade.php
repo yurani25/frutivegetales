@@ -4,34 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="{{ asset('css/pqr.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/pqredit.css') }}">
 </head>
 <body>
     <div class="users-form">
-        <form action="{{ route('pqrs.update', $pqr->id) }}" method="post">
+        <form action="{{ route('pqrs.update', $pqr['id']) }}" method="post">
             @csrf
             @method('PUT') 
             <h3>Editar datos</h3>
 
             <label for="tipo">Tipo de PQRS:</label>
             <select id="tipo" name="tipo">
-                <option value="peticion" {{ $pqr->tipo == 'peticion' ? 'selected' : '' }}>Petición</option>
-                <option value="queja" {{ $pqr->tipo == 'queja' ? 'selected' : '' }}>Queja</option>
-                <option value="reclamo" {{ $pqr->tipo == 'reclamo' ? 'selected' : '' }}>Reclamo</option>
-                <option value="sugerencia" {{ $pqr->tipo == 'sugerencia' ? 'selected' : '' }}>Sugerencia</option>
+                <option value="peticion" {{ optional($pqr)['tipo'] == 'peticion' ? 'selected' : '' }}>Petición</option>
+                <option value="queja" {{ optional($pqr)['tipo'] == 'queja' ? 'selected' : '' }}>Queja</option>
+                <option value="reclamo" {{ optional($pqr)['tipo'] == 'reclamo' ? 'selected' : '' }}>Reclamo</option>
+                <option value="sugerencia" {{ optional($pqr)['tipo'] == 'sugerencia' ? 'selected' : '' }}>Sugerencia</option>
             </select>
 
             <label for="mensaje">Mensaje:</label><br>
-            <textarea id="mensaje" name="motivo" rows="4" cols="50" required>{{ $pqr->motivo }}</textarea><br><br>
+            <textarea id="mensaje" name="motivo" rows="4" cols="50" required>{{ optional($pqr)['motivo'] }}</textarea><br><br>
 
             <label for="usuario">Usuario:</label>
-            <select id="usuario" name="user_id">
-                @foreach ($usuarios as $usuario)
-                    <option value="{{ $usuario->id }}" {{ $usuario->id == $pqr->user_id ? 'selected' : '' }}>
-                        {{ $usuario->id }} {{ $usuario->nombres }}
-                    </option>
+            <select name="user_id" id="user_id">
+                @foreach ($users as $user)
+                <option value="{{ $user['id'] }}" {{ $user_id == $user['id'] ? 'selected' : '' }}>
+                    {{ $user['nombres'] }}
+                </option>
                 @endforeach
-            </select><br><br>
+            </select>
 
             <input type="submit" value="Actualizar PQRS">
         </form>

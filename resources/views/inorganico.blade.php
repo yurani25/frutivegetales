@@ -8,30 +8,39 @@
 @section('content')
 <body>
     
-
- <!-- Products Start -->
- <div class="container-fluid pt-5 pb-3">
-    <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span style="color:#15c815 ;" >Inorganicos</span></h2>
+<!-- Products Start -->
+<div class="container-fluid pt-5 pb-3">
+    <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4"><span style="color:#15c815 ;">inorganicos</span></h2>
     <div class="row px-xl-5">
-        @foreach ($productos as $producto)
-        <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
-            <div class="product-item bg-light mb-4">
-                <div class="product-img position-relative overflow-hidden">
-                    <a href="{{ route('productos.show', $producto->id) }}"> <!-- Enlace al detalle del producto -->
-                    <img class="img-fluid product-image" src="{{$producto->imagen}}" alt="">
-                    <div class="product-action">
+        @if(isset($productos) && count($productos) > 0)
+            @foreach ($productos as $producto)
+                <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                    <div class="product-item bg-light mb-4">
+                        <div class="product-img position-relative overflow-hidden">
+
+                     {{--        <a href="{{ route('productos.show', $producto['id']) }}"> --}}
+                                <img class="img-fluid product-image" src="{{ $producto['imagen'] }}" alt="Imagen del producto">
+                                <div class="product-action">
+                                    <!-- Puedes agregar acciones adicionales aquí si es necesario -->
+                                </div>
+                            </a>
+                        </div>
+                        <div class="text-center py-4">
+                          {{--   <a class="h6 text-decoration-none text-truncate" href="{{ route('productos.show', $producto['id']) }}">{{ $producto['nombres'] }}</a> --}}
+                            <a class="h6 text-decoration-none text-truncate" href="#">{{ $producto['nombres'] }}</a>
+                            <div class="d-flex align-items-center justify-content-center mt-2">
+                                <h5>${{ $producto['precio'] }}</h5><h6 class="text-muted ml-3"><del></del></h6>
+                            </div>
+                            <a class="btn btn-primary mt-3" href="">Añadir a carrito </a>
+                        </div>
                     </div>
                 </div>
-                <div class="text-center py-4">
-                    <a class="h6 text-decoration-none text-truncate" href="{{ route('productos.show', $producto->id) }}">{{ $producto->nombres }}</a>
-                    <div class="d-flex align-items-center justify-content-center mt-2">
-                        <h5>${{ $producto->precio }}</h5><h6 class="text-muted ml-3"><del></del></h6>
-                    </div>
-                    <a class="btn btn-primary mt-3" href="">añadir a carrito </a>
-                </div>
+            @endforeach
+        @else
+            <div class="col-12">
+                <p>No hay productos disponibles.</p>
             </div>
-        </div>
-        @endforeach
+        @endif
     </div>
 </div>
 

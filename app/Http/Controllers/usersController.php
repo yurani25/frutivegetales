@@ -92,26 +92,37 @@ class usersController extends Controller
     {
         // Obtén las credenciales del formulario de inicio de sesión
         $credentials = $request->only('email', 'password');
-
+    
         // URL de la API
         $apiUrl = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
-
+    
         // Enviar solicitud POST a la API logins
         $response = Http::post($apiUrl . 'logins', $credentials);
         $data = $response->json();
-
-        // Verificar la respuesta de la API
-        if ($response->successful() && isset($data['accessToken'])) {
-            // Si la solicitud fue exitosa y hay un accessToken en la respuesta, pasa el nombre del usuario y el token a la sesión
-            session(['isLoggedIn' => true, 'userData' => $data['user'], 'auth_token' => $data['accessToken']]);
-        } else {
-            // Si la solicitud no fue exitosa o no hay accessToken en la respuesta, establece la sesión sin datos de usuario
-            session(['isLoggedIn' => false, 'userData' => null, 'auth_token' => null]);
+    
+          // Verificar la respuesta de la API
+    if ($response->successful() && isset($data['accessToken'])) {
+        // Si la solicitud fue exitosa, redirige a la página de inicio
+        session(['userData' => $data['user'], 'auth_token' => $data['accessToken']]);
+        
+        // Verificar el indicador de inicio de sesión
+        if (isset($data['isLoggedIn']) && $data['isLoggedIn']) {
+            session(['isLoggedIn' => true]);
         }
 
-        // Redirige a la vista de inicio
         return redirect()->route('index');
+    } else {
+        // Manejo de errores más detallado
+        if ($response->status() === 401) {
+            // Credenciales incorrectas
+            return redirect()->route('login')->withErrors(['email' => 'Credenciales incorrectas']);
+        } else {
+            // Otro tipo de error
+            return redirect()->route('login')->withErrors(['general' => 'Error en el inicio de sesión']);
+        }
+        }
     }
+    
 
 
 
@@ -179,19 +190,35 @@ class usersController extends Controller
      */
     public function edit($id)
     {
-        $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
+        try {
+ // Obtener el id del usuario de la sesión
+ $userId = session('userData')['id'] ?? null;
+
+ if (!$userId) {
+     // Manejar el caso en que no se pueda obtener el id del usuario
+     return view('error')->with('error', 'No se puede obtener el ID del usuario desde la sesión.');
+ }
+
+            // Realizar solicitud GET a la API para obtener los datos del usuario
+            $response = Http::get(env('URL_SERVER_API') . 'users/edit/' . $id);
     
-        $response = Http::get($url . 'users/' . $id);
+            if ($response->successful()) {
+                // Extraer datos de la respuesta
+                $data = $response->json();
+                $user = $data['user'];
     
-        if ($response->successful()) {
-            $usuario = $response->json();
-    
-            return view('usuarios.edit', compact('users'));
-        } else {
-            // Manejo de error si la solicitud a la API no tiene éxito
-            return redirect()->back()->with('error', 'No se pudo obtener los datos del usuario');
+                // Renderizar la vista con los datos obtenidos
+                return view('users.edit', compact('user'));
+            } else {
+                // Manejar el error si la solicitud a la API no es exitosa
+                return view('error')->with('error', 'Error al obtener el usuario de la API.');
+            }
+        } catch (\Exception $e) {
+            // Manejo de errores generales
+            return view('error')->with('error', 'Error al obtener el usuario: ' . $e->getMessage());
         }
     }
+    
     
 
     /**
@@ -235,24 +262,46 @@ class usersController extends Controller
     } */
      
 
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
-     
-        $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
-
-        $response = Http::put($url . 'users/update/' . $request->id, [
-         
-            'nombres' => $request->nombres,
-            'apellidos' => $request->apellidos,
-            'edad' => $request->edad,
-            'telefono' => $request->telefono,
-            'email' => $request->email,
-            'password' => $request->password,
-
-        ]);
-      
-        return redirect()->route('users.index');
+        try {
+            $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
+    
+            // Construir datos para la solicitud
+            $requestData = [
+                'nombres' => $request->nombres,
+                'apellidos' => $request->apellidos,
+                'edad' => $request->edad,
+                'telefono' => $request->telefono,
+                'email' => $request->email,
+             /*    'password' => $request->password, */
+            ];
+    
+            // Verificar si se proporciona una nueva imagen de perfil
+            if ($request->hasFile('profile_picture')) {
+                // Leer el contenido de la imagen y codificarlo en base64
+                $imageContent = base64_encode(file_get_contents($request->file('profile_picture')->path()));
+                $requestData['profile_picture'] = $imageContent;
+            }
+    
+            // Enviar la solicitud a la API
+            $response = Http::put($url . 'users/update/' . $id, $requestData);
+    
+            // Verificar la respuesta de la API
+            if ($response->successful()) {
+                // Redirigir a la ruta de usuarios (o donde sea apropiado)
+                return redirect()->route('users.edit');
+            } else {
+                // Manejar el error si la solicitud no fue exitosa
+                return back()->withErrors(['error' => 'Error al actualizar el usuario en la API']);
+            }
+        } catch (\Exception $e) {
+            // Manejar cualquier excepción que ocurra
+            return back()->withErrors(['error' => 'Error en el servidor: ' . $e->getMessage()]);
+        }
     }
+    
+    
 
     /**
      * Remove the specified resource from storage.
