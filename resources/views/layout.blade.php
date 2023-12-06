@@ -20,7 +20,7 @@
 </head>
 <body>
     
-    <div class="container mt-8 mb-1" style="width: 190%; " >
+    <div class="container mt-8 mb-1" style="width: 150%;">
         <div class="row align-items-center">
             <!-- Logotipo  -->
             <div class="col">
@@ -50,7 +50,7 @@
         </div>
     </div>
     
-    <nav class="navbar navbar-expand-lg navbar-light bg-success-light">
+    <nav class="navbar navbar-expand-md navbar-light bg-success-light">
         <div class="container">
             <a class="navbar-brand" href="{{route('index')}}">Inicio</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
@@ -72,6 +72,10 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('contact') }}">Contáctenos</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('mapa') }}">Ubicacion</a>
+                    </li>
+
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="pqrsDropdown" role="button" data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">

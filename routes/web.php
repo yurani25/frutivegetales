@@ -27,6 +27,8 @@ Route::get('/', function () {
     return view('Auth.login');
 });
 
+//eliminar
+Route::get('productos_destroy/{producto}',[productosController::class, 'destroy'])->name('productos.destroy');
 
 
 // Rutas de autenticación
@@ -54,10 +56,10 @@ Route::get('users/{user}',[usersController::class, 'destroy'])->name('users.dest
 //login y registro
 
 Route::get('/usuario/create',[usersController::class, 'createUser'])->name('user.create');
-route::get('login',[usersController::class,'login'])->name('login');
-route::post('logins',[usersController::class,'logins'])->name('logins');
-route::post('registro',[usersController::class,'registro'])->name('registro');
- route::get('logout',[usersController::class,'logout'])->name('logout'); 
+Route::get('login',[usersController::class,'login'])->name('login');
+Route::post('logins',[usersController::class,'logins'])->name('logins');
+Route::post('registro',[usersController::class,'registro'])->name('registro');
+Route::get('logout',[usersController::class,'logout'])->name('logout'); 
 
 
  //productos
@@ -81,8 +83,6 @@ Route::get('productos/{id}', [productosController::class, 'show'])->name('produc
 Route::get('productos/{producto}/edit', [productosController::class, 'edit'])->name('productos.edit');
 Route::post('/productos/update', [productosController::class, 'update'])->name('productos');
 
-//eliminar
-Route::get('productos/{producto}',[productosController::class, 'destroy'])->name('productos.destroy');
 
 
 ////
@@ -197,9 +197,9 @@ Route::get('error', function () {
     return view('error');
 });
 
-Route::get('registro', function () {
+/* Route::get('registro', function () {
     return view('registro');
-});
+}); */
 Route::get('contact', function () {
     return view('contact');
 })->name('contact');
@@ -240,6 +240,11 @@ Route::get('nosotros', function () {
 Route::get('ayuda', function () {
     return view('ayuda');
 })->name('ayuda');
+
+Route::get('mapa', function () {
+    return view('mapa');
+})->name('mapa');
+
 
 Auth::routes();
 

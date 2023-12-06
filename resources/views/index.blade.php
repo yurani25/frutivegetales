@@ -69,6 +69,10 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('contact') }}">Contáctenos</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('mapa') }}">Ubicacion</a>
+                    </li>
+
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="pqrsDropdown" role="button" data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">

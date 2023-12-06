@@ -1,0 +1,30 @@
+h1 {
+    color: #15c815; /* Cambia el color del texto a verde */
+    text-align: center; /* Centra el texto */
+}
+.container-mapa {
+    display: flex;
+    padding: 20px; /* Ajusta según tus necesidades para agregar espacio alrededor del contenedor */
+}
+
+.image-container {
+    width: 45%; /* Ajusta según tus necesidades */
+    margin-right: 10px; /* Ajusta el margen derecho para agregar espacio entre la imagen y el mapa */
+    border-radius: 21px 23px 34px 30px;
+    overflow: hidden; /* Oculta cualquier parte de la imagen que se extienda más allá del contenedor */
+}
+
+.image-container img {
+    width: 100%;
+    max-width: 100%; /* Ajusta según tus necesidades */
+    height: auto;
+}
+
+.map-container {
+    width: 55%; /* Ajusta según tus necesidades */
+}
+
+#map {
+    height: 400px; /* Ajusta según tus necesidades */
+    width: 100%;
+}

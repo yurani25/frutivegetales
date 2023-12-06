@@ -58,11 +58,10 @@ class usersController extends Controller
             return response('Error al obtener datos de la API', 500);
         } */
     } 
-    public function registro(Request $request )
+    public function registro(Request $request)
     {
-
         $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
-
+    
         $response = Http::post($url . 'register', [
             'nombres' => $request->nombres,
             'apellidos' => $request->apellidos,
@@ -71,21 +70,29 @@ class usersController extends Controller
             'email' => $request->email,
             'password' => $request->password,
         ]);
-
+    
         // Verificar la respuesta de la API
         if ($response->successful()) {
+            // Obtener el contenido de la respuesta como un array
             $data = $response->json();
-
-            // Almacena el token en la sesión
-            session(['auth_token' => $data['access_token']]);
-
-            // Manejar la respuesta como desees, por ejemplo, redirigir al usuario
-            return redirect()->route('login');
+    
+            // Verificar si 'access_token' está presente en la respuesta
+            if (isset($data['access_token'])) {
+                // Almacena el token en la sesión
+                session(['auth_token' => $data['access_token']]);
+    
+                // Manejar la respuesta como desees, por ejemplo, redirigir al usuario
+                return redirect()->route('login');
+            } else {
+                // Manejar el caso donde 'access_token' no está presente en la respuesta
+                return response()->json(['error' => 'Error al obtener el token de acceso desde la API'], 500);
+            }
         } else {
             // Si la solicitud no fue exitosa, manejar el error
             return response()->json(['error' => 'Error al registrar el usuario'], $response->status());
         }
     }
+    
     
     
     public function logins(Request $request)
@@ -261,7 +268,7 @@ class usersController extends Controller
         }
     } */
      
-
+/// recuerda guardar el token en login y llamarlo en update en primera linia 
     public function update(Request $request, $id)
     {
         try {

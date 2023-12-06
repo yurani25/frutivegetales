@@ -124,7 +124,7 @@ public function store(Request $request)
             'imagen',
             file_get_contents($request->file('imagen')->getRealPath()),
             $request->file('imagen')->getClientOriginalName()
-        )->post($url . 'productos/store', [
+        )->post($url . 'productos_store', [
             'nombres' => $request->nombres,
             'tiempo_reclamo' => $request->tiempo_reclamo,
             'precio' => $request->precio,
@@ -239,7 +239,7 @@ public function update(Request $request)
     {
 
         $url = env('URL_SERVER_API', 'http://127.0.0.1:8000/api/');
-        $response = Http::delete($url . 'productos/destroy/' . $producto);
+        $response = Http::delete($url . 'productos_destroy/' . $producto);
 
         return redirect()->route('productos.index');
     }

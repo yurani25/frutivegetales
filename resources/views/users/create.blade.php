@@ -76,10 +76,10 @@ function validateForm() {
             <input type="password" name="password" placeholder="Contraseña">
             <div id="passwordError" class="error"></div>
             
-         {{--    <input type="submit" value="Enviar formulario"> --}}
-            <div class="">
+            <input type="submit" value="Enviar formulario"> 
+           {{--  <div class="">
                 <button type="submit" class="btn btn-primary btn-lg btn-block btn-login">Registrarte</button>
-            </div>
+            </div> --}}
  
      
         </form>
