@@ -74,6 +74,6 @@
     </div>
 </footer>
     <!-- Llama a la función initMap() cuando se cargue la página -->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCA3vwNVTJwlhNQKoSiSobGP-PzcUSf-Cc&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCYXdwZsYi1q1R6SPwnVxGfBVm_f3Uvf7o&callback=initMap"></script>
 </body>
     @endsection
